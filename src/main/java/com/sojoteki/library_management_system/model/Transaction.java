@@ -1,5 +1,6 @@
 package com.sojoteki.library_management_system.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.sojoteki.library_management_system.enums.TransactionType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -8,13 +9,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id"
-)
 @Entity
 @Table(name = "Transaction")
 @Data
@@ -39,9 +34,11 @@ public class Transaction {
 
     @ManyToOne
     @JoinColumn
+    @JsonBackReference
     private Card card;
 
     @ManyToOne
     @JoinColumn
+    @JsonBackReference
     private Book book;
 }

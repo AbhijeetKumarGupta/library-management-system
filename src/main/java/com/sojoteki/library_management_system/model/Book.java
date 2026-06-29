@@ -1,5 +1,7 @@
 package com.sojoteki.library_management_system.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -41,8 +43,10 @@ public class Book {
 
     @ManyToOne
     @JoinColumn
+    @JsonBackReference
     private Card card;
 
     @OneToMany(mappedBy = "book")
+    @JsonManagedReference
     private List<Transaction> transactions;
 }

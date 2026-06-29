@@ -1,5 +1,7 @@
 package com.sojoteki.library_management_system.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sojoteki.library_management_system.enums.CardStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -10,13 +12,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
 import java.util.List;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id"
-)
 @Entity
 @Table(name = "card")
 @Data
@@ -45,11 +41,14 @@ public class Card {
 
     @OneToOne
     @JoinColumn
+    @JsonBackReference
     private Student student;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "card")
     private List<Book> books;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "card")
     private List<Transaction> transactions;
 }
