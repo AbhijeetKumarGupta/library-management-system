@@ -69,4 +69,26 @@ public class StudentService {
             throw new RuntimeException("Student with email " + email + " not found");
         }
     }
+
+    public String updateStudent(int stdId, StudentRequestDto studentRequestDto){
+        Student student = getStudentById(stdId);
+
+        if(student != null) {
+            Card card = cardRepository.findById(studentRequestDto.getCardId()).orElse(null);
+
+            student.setName(studentRequestDto.getName());
+            student.setEmail(studentRequestDto.getEmail());
+            student.setMobile(studentRequestDto.getMobile());
+            student.setDepartment(studentRequestDto.getDepartment());
+            student.setSemester(studentRequestDto.getSemester());
+            student.setGender(studentRequestDto.getGender());
+            student.setAddress(studentRequestDto.getAddress());
+            student.setDob(studentRequestDto.getDob());
+            if(card != null) card.setStudent(student);
+
+            studentRepository.save(student);
+        }
+
+        return "Student updated successfully";
+    }
 }

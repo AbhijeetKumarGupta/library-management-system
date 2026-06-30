@@ -55,4 +55,14 @@ public class StudentController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getClass()+":\n"+"Fetch student by id failed - "+e.getMessage());
         }
     }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateStudent(@PathVariable int id, @RequestBody StudentRequestDto studentRequestDto){
+        try{
+            String response = studentService.updateStudent(id, studentRequestDto);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getClass()+":\n"+"Update student with id "+ id +" failed - "+e.getMessage());
+        }
+    }
 }
