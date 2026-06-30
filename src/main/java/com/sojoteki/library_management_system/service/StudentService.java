@@ -87,9 +87,11 @@ public class StudentService {
             if(card != null) card.setStudent(student);
 
             studentRepository.save(student);
+
+            return "Student updated successfully";
         }
 
-        return "Student updated successfully";
+        throw new RuntimeException("Student with id " + stdId + " not found");
     }
 
     public String deleteStudent(int stdId){

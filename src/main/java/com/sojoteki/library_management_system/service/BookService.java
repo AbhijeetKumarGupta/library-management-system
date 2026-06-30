@@ -42,4 +42,41 @@ public class BookService {
             throw new RuntimeException("Book with id " + bookId + " not found");
         }
     }
+
+    public Book getBookByTitle(String title){
+        Optional<Book> book = bookRepository.getBookByTitle(title);
+
+        if(book.isPresent()){
+            return book.get();
+        }else{
+            throw new RuntimeException("Book with title " + title + " not found");
+        }
+    }
+
+    public String updateBook(int bookId, BookRequestDto bookRequestDto){
+        Book book = getBookById(bookId);
+
+        if(book != null){
+            book.setTitle(bookRequestDto.getTitle());
+            book.setPublisherName(bookRequestDto.getPublisherName());
+            book.setPublishedDate(bookRequestDto.getPublishedDate());
+            book.setPages(bookRequestDto.getPages());
+            book.setAvailability(bookRequestDto.isAvailability());
+            book.setCategory(bookRequestDto.getCategory());
+            book.setRackNo(bookRequestDto.getRackNo());
+            bookRepository.save(book);
+            return "Book updated successfully!!";
+        }
+
+        throw new RuntimeException("Book with id " + bookId + " not found");
+    }
+
+    public String deleteBook(int bookId){
+        Book book = getBookById(bookId);
+        if(book != null){
+            bookRepository.delete(book);
+            return "Book deleted successfully!!";
+        }
+        throw new RuntimeException("Book with id " + bookId + " not found");
+    }
 }

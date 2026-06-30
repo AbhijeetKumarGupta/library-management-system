@@ -41,4 +41,34 @@ public class BookController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getClass()+":\n"+"Get operation failed - "+e.getMessage());
         }
     }
+
+    @GetMapping("/getByTitle")
+    public ResponseEntity<?> getBookByTitle(@RequestParam String title){
+        try {
+            Book response = bookService.getBookByTitle(title);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getClass()+":\n"+"Get operation failed - "+e.getMessage());
+        }
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateBook(@PathVariable int id, @RequestBody BookRequestDto bookRequestDto){
+        try{
+            String response = bookService.updateBook(id, bookRequestDto);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getClass()+":\n"+"Update operation failed - "+e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteBook(@PathVariable int id){
+        try{
+            String response = bookService.deleteBook(id);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getClass()+":\n"+"Delete operation failed - "+e.getMessage());
+        }
+    }
 }
