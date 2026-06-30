@@ -1,8 +1,11 @@
 package com.sojoteki.library_management_system.controller;
 
 import com.sojoteki.library_management_system.model.Book;
+import com.sojoteki.library_management_system.request_dto.BookRequestDto;
 import com.sojoteki.library_management_system.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,8 +18,13 @@ public class BookController {
     private BookService bookService;
 
     @PostMapping("/save")
-    public String saveDoctor(@RequestBody Book book){
-        return bookService.saveBook(book);
+    public ResponseEntity<?>  saveBook(@RequestBody BookRequestDto bookRequestDto){
+        try{
+            String response = bookService.saveBook(bookRequestDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getClass()+":\n"+"Save operation failed - "+e.getMessage());
+        }
     }
 
     @GetMapping("")
@@ -25,7 +33,12 @@ public class BookController {
     }
 
     @GetMapping("/{id}")
-    public Book getBookById(@PathVariable int id){
-        return bookService.getBookById(id);
+    public ResponseEntity<?> getBookById(@PathVariable int id){
+        try {
+            Book response = bookService.getBookById(id);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getClass()+":\n"+"Get operation failed - "+e.getMessage());
+        }
     }
 }
