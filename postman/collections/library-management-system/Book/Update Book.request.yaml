@@ -1,0 +1,16 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/book/update/4"
+method: PUT
+body:
+  type: json
+  content: |-
+    {
+        "title": "I AM Updated",
+        "publisherName": "Me",
+        "publishedDate": "26/06/2026",
+        "pages": 10,
+        "availability": true,
+        "category": "Spiritual",
+        "rackNo": 12
+    }
+order: 5000

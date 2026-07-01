@@ -5,8 +5,9 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sojoteki.library_management_system.enums.CardStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -15,7 +16,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "card")
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Card {
@@ -39,16 +41,16 @@ public class Card {
     @UpdateTimestamp
     private Date updatedDate;
 
-    @OneToOne
-    @JoinColumn
-    @JsonBackReference
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "student_id", unique = true)
+    @JsonBackReference("student-card")
     private Student student;
 
-    @JsonManagedReference
+    @JsonManagedReference("card-books")
     @OneToMany(mappedBy = "card")
     private List<Book> books;
 
-    @JsonManagedReference
-    @OneToMany(mappedBy = "card")
+    @JsonManagedReference("card-transactions")
+    @OneToMany(mappedBy = "card", cascade = CascadeType.ALL)
     private List<Transaction> transactions;
 }

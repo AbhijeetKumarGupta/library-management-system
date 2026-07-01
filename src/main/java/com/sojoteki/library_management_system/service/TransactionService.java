@@ -1,5 +1,8 @@
 package com.sojoteki.library_management_system.service;
 
+import com.sojoteki.library_management_system.enums.TransactionType;
+import com.sojoteki.library_management_system.exception.BadRequestException;
+import com.sojoteki.library_management_system.exception.ResourceNotFoundException;
 import com.sojoteki.library_management_system.model.Book;
 import com.sojoteki.library_management_system.model.Card;
 import com.sojoteki.library_management_system.model.Transaction;
@@ -7,27 +10,26 @@ import com.sojoteki.library_management_system.repository.BookRepository;
 import com.sojoteki.library_management_system.repository.CardRepository;
 import com.sojoteki.library_management_system.repository.TransactionRepository;
 import com.sojoteki.library_management_system.request_dto.TransactionRequestDto;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class TransactionService {
 
-    @Autowired
-    private TransactionRepository transactionRepository;
+    private final TransactionRepository transactionRepository;
+    private final CardRepository cardRepository;
+    private final BookRepository bookRepository;
 
-    @Autowired
-    private CardRepository cardRepository;
-
-    @Autowired
-    private BookRepository bookRepository;
-
-    public String saveTransaction(TransactionRequestDto transactionRequestDto){
-        Card card = cardRepository.findById(transactionRequestDto.getCardId()).orElse(null);
-        Book book = bookRepository.findById(transactionRequestDto.getBookId()).orElse(null);
+    @Transactional
+    public String saveTransaction(TransactionRequestDto transactionRequestDto) {
+        Card card = cardRepository.findById(transactionRequestDto.getCardId())
+                .orElseThrow(() -> new ResourceNotFoundException("Card with id " + transactionRequestDto.getCardId() + " not found"));
+        Book book = bookRepository.findById(transactionRequestDto.getBookId())
+                .orElseThrow(() -> new ResourceNotFoundException("Book with id " + transactionRequestDto.getBookId() + " not found"));
 
         Transaction transaction = new Transaction();
         transaction.setDueDate(transactionRequestDto.getDueDate());
@@ -35,27 +37,39 @@ public class TransactionService {
         transaction.setCard(card);
         transaction.setBook(book);
 
+        applyBookState(transactionRequestDto.getTransactionType(), book, card);
         transactionRepository.save(transaction);
-
-        if(book != null){
-            book.setCard(card);
-            bookRepository.save(book);
-        }
 
         return "Transaction saved successfully";
     }
 
-    public List<Transaction> getAllTransactions(){
+    public List<Transaction> getAllTransactions() {
         return transactionRepository.findAll();
     }
 
-    public Transaction getTransactionById(int transactionId){
-        Optional<Transaction> transaction = transactionRepository.findById(transactionId);
+    public Transaction getTransactionById(int transactionId) {
+        return transactionRepository.findById(transactionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Transaction with id " + transactionId + " not found"));
+    }
 
-        if(transaction.isPresent()){
-            return transaction.get();
-        }else{
-            throw new RuntimeException("Transaction not found");
+    private void applyBookState(TransactionType transactionType, Book book, Card card) {
+        if (transactionType == TransactionType.BORROW) {
+            if (!book.isAvailability()) {
+                throw new BadRequestException("Book with id " + book.getId() + " is not available");
+            }
+
+            book.setAvailability(false);
+            book.setCard(card);
+            return;
+        }
+
+        if (transactionType == TransactionType.RETURN) {
+            if (book.getCard() == null || book.getCard().getId() != card.getId()) {
+                throw new BadRequestException("Book with id " + book.getId() + " is not borrowed on card " + card.getId());
+            }
+
+            book.setAvailability(true);
+            book.setCard(null);
         }
     }
 }

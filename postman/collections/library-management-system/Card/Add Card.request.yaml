@@ -1,0 +1,11 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/card/save"
+method: POST
+body:
+  type: json
+  content: |-
+    {
+        "cardStatus": "ACTIVE",
+        "expiryDate": "26/06/2027"
+    }
+order: 1000

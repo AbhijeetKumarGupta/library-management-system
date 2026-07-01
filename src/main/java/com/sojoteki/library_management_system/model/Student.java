@@ -4,12 +4,14 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sojoteki.library_management_system.enums.Gender;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "student")
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Student {
@@ -43,7 +45,7 @@ public class Student {
     @Column(name = "dob", nullable = false)
     private String dob;
 
-    @JsonManagedReference
+    @JsonManagedReference("student-card")
     @OneToOne(mappedBy = "student", cascade = CascadeType.ALL)
     private Card card;
 }

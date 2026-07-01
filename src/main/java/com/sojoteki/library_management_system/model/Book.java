@@ -4,14 +4,16 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
 @Entity
 @Table(name = "book")
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Book {
@@ -41,12 +43,12 @@ public class Book {
     @Column(name = "rack_no", nullable = false)
     private int rackNo;
 
-    @ManyToOne
-    @JoinColumn
-    @JsonBackReference
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "card_id")
+    @JsonBackReference("card-books")
     private Card card;
 
-    @OneToMany(mappedBy = "book")
-    @JsonManagedReference
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
+    @JsonManagedReference("book-transactions")
     private List<Transaction> transactions;
 }

@@ -1,0 +1,4 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/student?sortBy=name&sortOrder=desc&pageNo=0&pageSize=2"
+method: GET
+order: 2000

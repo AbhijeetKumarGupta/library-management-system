@@ -1,0 +1,5 @@
+name: Globals
+values:
+  - key: baseUrl
+    value: 'http://localhost:7777'
+    enabled: true

@@ -3,7 +3,8 @@ package com.sojoteki.library_management_system.controller;
 import com.sojoteki.library_management_system.model.Book;
 import com.sojoteki.library_management_system.request_dto.BookRequestDto;
 import com.sojoteki.library_management_system.service.BookService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,63 +13,39 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/book")
+@RequiredArgsConstructor
 public class BookController {
 
-    @Autowired
-    private BookService bookService;
+    private final BookService bookService;
 
     @PostMapping("/save")
-    public ResponseEntity<?>  saveBook(@RequestBody BookRequestDto bookRequestDto){
-        try{
-            String response = bookService.saveBook(bookRequestDto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getClass()+":\n"+"Save operation failed - "+e.getMessage());
-        }
+    public ResponseEntity<String> saveBook(@Valid @RequestBody BookRequestDto bookRequestDto) {
+        String response = bookService.saveBook(bookRequestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping("")
-    public List<Book> getAllBooks(){
+    public List<Book> getAllBooks() {
         return bookService.getAllBooks();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getBookById(@PathVariable int id){
-        try {
-            Book response = bookService.getBookById(id);
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-        } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getClass()+":\n"+"Get operation failed - "+e.getMessage());
-        }
+    public Book getBookById(@PathVariable int id) {
+        return bookService.getBookById(id);
     }
 
     @GetMapping("/getByTitle")
-    public ResponseEntity<?> getBookByTitle(@RequestParam String title){
-        try {
-            Book response = bookService.getBookByTitle(title);
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-        }catch(Exception e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getClass()+":\n"+"Get operation failed - "+e.getMessage());
-        }
+    public Book getBookByTitle(@RequestParam String title) {
+        return bookService.getBookByTitle(title);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<?> updateBook(@PathVariable int id, @RequestBody BookRequestDto bookRequestDto){
-        try{
-            String response = bookService.updateBook(id, bookRequestDto);
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-        }catch(Exception e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getClass()+":\n"+"Update operation failed - "+e.getMessage());
-        }
+    public String updateBook(@PathVariable int id, @Valid @RequestBody BookRequestDto bookRequestDto) {
+        return bookService.updateBook(id, bookRequestDto);
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteBook(@PathVariable int id){
-        try{
-            String response = bookService.deleteBook(id);
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-        }catch(Exception e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getClass()+":\n"+"Delete operation failed - "+e.getMessage());
-        }
+    public String deleteBook(@PathVariable int id) {
+        return bookService.deleteBook(id);
     }
 }

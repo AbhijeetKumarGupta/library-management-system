@@ -4,15 +4,17 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.sojoteki.library_management_system.enums.TransactionType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
 
 @Entity
 @Table(name = "Transaction")
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Transaction {
@@ -32,13 +34,13 @@ public class Transaction {
     @Enumerated(EnumType.STRING)
     private TransactionType transactionType;
 
-    @ManyToOne
-    @JoinColumn
-    @JsonBackReference
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "card_id")
+    @JsonBackReference("card-transactions")
     private Card card;
 
-    @ManyToOne
-    @JoinColumn
-    @JsonBackReference
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "book_id")
+    @JsonBackReference("book-transactions")
     private Book book;
 }

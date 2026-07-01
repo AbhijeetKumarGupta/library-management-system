@@ -1,0 +1,5 @@
+workspace:
+  id: 6885868f-378a-49ba-b28f-d08cf58d0e95
+cloudResources:
+  collections:
+    ../postman/collections/library-management-system: 56182119-709354f7-5202-4615-80b5-c4f8f2a75e9c

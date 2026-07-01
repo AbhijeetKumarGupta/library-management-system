@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/transaction/save"
+method: POST
+body:
+  type: json
+  content: |-
+    {
+        "dueDate": "26/07/2026",
+        "transactionType": "BORROW",
+        "cardId": 1,
+        "bookId": 1
+    }
+order: 1000

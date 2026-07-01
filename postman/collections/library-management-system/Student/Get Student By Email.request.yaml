@@ -1,0 +1,4 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/student/getByEmail?email=anikeg375@gmail.com"
+method: GET
+order: 4000

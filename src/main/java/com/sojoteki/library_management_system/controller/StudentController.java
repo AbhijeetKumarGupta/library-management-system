@@ -3,7 +3,8 @@ package com.sojoteki.library_management_system.controller;
 import com.sojoteki.library_management_system.model.Student;
 import com.sojoteki.library_management_system.request_dto.StudentRequestDto;
 import com.sojoteki.library_management_system.service.StudentService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,68 +12,44 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/student")
+@RequiredArgsConstructor
 public class StudentController {
 
-    @Autowired
-    private StudentService studentService;
+    private final StudentService studentService;
 
     @PostMapping("/save")
-    public ResponseEntity<?> saveStudent(@RequestBody StudentRequestDto studentRequestDto){
-        try {
-            String response = studentService.saveStudent(studentRequestDto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        }catch(Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getClass()+":\nSave operation failed - "+e.getMessage());
-        }
+    public ResponseEntity<String> saveStudent(@Valid @RequestBody StudentRequestDto studentRequestDto) {
+        String response = studentService.saveStudent(studentRequestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping("")
-    public ResponseEntity<?> getAllStudents(@RequestParam String sortBy, @RequestParam String sortOrder, @RequestParam int pageNo, @RequestParam int pageSize){
-        try {
-            Page<Student> studentPage = studentService.getAllStudents(sortBy, sortOrder, pageNo, pageSize);
-            return ResponseEntity.status(HttpStatus.OK).body(studentPage);
-        } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getClass()+":\nFetch students list failed - "+e.getMessage());
-        }
+    public Page<Student> getAllStudents(
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortOrder,
+            @RequestParam(defaultValue = "0") int pageNo,
+            @RequestParam(defaultValue = "10") int pageSize
+    ) {
+        return studentService.getAllStudents(sortBy, sortOrder, pageNo, pageSize);
     }
 
     @GetMapping("/getByEmail")
-    public ResponseEntity<?> getStudentByEmail(@RequestParam String email){
-        try{
-            Student student = studentService.getStudentByEmail(email);
-            return ResponseEntity.status(HttpStatus.OK).body(student);
-        } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getClass()+":\n"+"Fetch student by id failed - "+e.getMessage());
-        }
+    public Student getStudentByEmail(@RequestParam String email) {
+        return studentService.getStudentByEmail(email);
     }
 
-    @GetMapping("{id}")
-    public ResponseEntity<?> getStudentById(@PathVariable int id){
-        try {
-            Student student = studentService.getStudentById(id);
-            return ResponseEntity.status(HttpStatus.OK).body(student);
-        }catch(Exception e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getClass()+":\n"+"Fetch student by id failed - "+e.getMessage());
-        }
+    @GetMapping("/{id}")
+    public Student getStudentById(@PathVariable int id) {
+        return studentService.getStudentById(id);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<?> updateStudent(@PathVariable int id, @RequestBody StudentRequestDto studentRequestDto){
-        try{
-            String response = studentService.updateStudent(id, studentRequestDto);
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-        }catch(Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getClass()+":\n"+"Update student with id "+ id +" failed - "+e.getMessage());
-        }
+    public String updateStudent(@PathVariable int id, @Valid @RequestBody StudentRequestDto studentRequestDto) {
+        return studentService.updateStudent(id, studentRequestDto);
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteStudent(@PathVariable int id){
-        try{
-            String response = studentService.deleteStudent(id);
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-        }catch(Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getClass()+":\n"+"Delete student with id "+ id +" failed - "+e.getMessage());
-        }
+    public String deleteStudent(@PathVariable int id) {
+        return studentService.deleteStudent(id);
     }
 }

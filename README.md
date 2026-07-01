@@ -27,9 +27,11 @@ A Spring Boot based Library Management System for managing students, books, libr
 ```text
 src/main/java/com/sojoteki/library_management_system
 ├── controller
+├── exception
 ├── service
 ├── repository
 ├── model
+├── response
 ├── request_dto
 └── enums
 ```
@@ -42,10 +44,17 @@ Default configuration:
 server.port=7777
 spring.datasource.url=jdbc:mysql://localhost:3306/library_management_system
 spring.datasource.username=root
-spring.datasource.password=your_password
+spring.datasource.password=
 spring.jpa.hibernate.ddl-auto=update
 ```
-Update `src/main/resources/application.properties` with your local MySQL username and password.
+
+Prefer environment variables for local credentials:
+```bash
+export DB_URL=jdbc:mysql://localhost:3306/library_management_system
+export DB_USERNAME=root
+export DB_PASSWORD=your_password
+```
+See `.env.example` for all supported local variables.
 
 ## How to Run
 
@@ -58,18 +67,29 @@ cd library-management-system
 ```sql
 CREATE DATABASE library_management_system;
 ```
-3. Update database credentials in:
-```text
-src/main/resources/application.properties
-```
+3. Set database credentials with environment variables, or update `src/main/resources/application.properties` for local-only use.
 4. Run the application
 ```bash
-mvn spring-boot:run
+./mvnw spring-boot:run
 ```
 The application will start on:
 ```text
 http://localhost:7777
 ```
+## Tests
+
+Tests use an in-memory H2 database through the `test` profile, so they do not require MySQL.
+```bash
+./mvnw test
+```
+
+## Postman
+
+The Postman collection is in `postman/collections/library-management-system`. Requests use the global `{{baseUrl}}`, which defaults to:
+```text
+http://localhost:7777
+```
+
 ## API Modules
 
 - Book APIs
